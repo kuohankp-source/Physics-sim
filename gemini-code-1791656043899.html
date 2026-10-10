@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>郭志雄物理 - 一維碰撞模擬器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            padding: 12px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        .simulation-container {
+            position: relative;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 520px;
+            background: #fafafa;
+        }
+
+        .system-card {
+            background: #2c3e50;
+            color: #ffffff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .system-item {
+            text-align: center;
+        }
+
+        .system-item .label {
+            font-size: 0.95rem;
+            color: #bdc3c7;
+            display: block;
+        }
+
+        .system-item .value {
+            font-size: 1.35rem;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .object-card {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 6px solid #333;
+        }
+
+        .object-card.obj-a { border-left-color: #3498db; }
+        .object-card.obj-b { border-left-color: #e74c3c; }
+
+        .object-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .data-item {
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .data-item span.label {
+            color: #666;
+            font-size: 0.85rem;
+            display: block;
+        }
+
+        .data-item span.value {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.05rem;
+        }
+
+        .controls {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group h4 {
+            font-size: 1rem;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 4px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .input-row label {
+            flex: 1;
+        }
+
+        .input-row input[type="range"] {
+            flex: 2;
+            margin: 0 8px;
+        }
+
+        .input-row span {
+            width: 60px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .global-controls {
+            grid-column: span 2;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .global-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 10px 0 5px 0;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: bold;
+            transition: background 0.2s, opacity 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary { background: #2ecc71; color: white; }
+        .btn-primary:hover:not(:disabled) { background: #27ae60; }
+        .btn-step { background: #3498db; color: white; }
+        .btn-step:hover:not(:disabled) { background: #2980b9; }
+        .btn-step-back { background: #8e44ad; color: white; }
+        .btn-step-back:hover:not(:disabled) { background: #732d91; }
+        
+        .btn-cm-toggle { 
+            background: #34495e; 
+            color: #ffffff; 
+            border: 2px solid #2c3e50;
+        }
+        .btn-cm-toggle.active { 
+            background: #9b59b6; 
+            border-color: #8e44ad;
+            box-shadow: 0 0 10px rgba(155, 89, 182, 0.7); 
+        }
+
+        .btn-rel-toggle {
+            background: #34495e;
+            color: #ffffff;
+            border: 2px solid #2c3e50;
+        }
+        .btn-rel-toggle.active {
+            background: #e67e22;
+            border-color: #d35400;
+            box-shadow: 0 0 10px rgba(230, 126, 34, 0.7);
+        }
+
+        .btn-reset { 
+            background: #e74c3c; 
+            color: white; 
+            font-size: 1rem;
+            padding: 10px 22px;
+        }
+        .btn-reset:hover:not(:disabled) { background: #c0392b; }
+
+        /* 全螢幕切換按鈕樣式 */
+        .btn-fullscreen {
+            background: #16a085;
+            color: white;
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+        .btn-fullscreen:hover:not(:disabled) { background: #138d75; }
+
+        .file-input {
+            font-size: 0.85rem;
+        }
+
+        /* ========== 全螢幕演示模式專用樣式 ========== */
+        body.fullscreen-mode {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            background: #111;
+        }
+
+        body.fullscreen-mode .header,
+        body.fullscreen-mode .dashboard,
+        body.fullscreen-mode .control-group,
+        body.fullscreen-mode .global-inputs {
+            display: none !important;
+        }
+
+        body.fullscreen-mode .system-card {
+            border-radius: 0;
+            padding: 8px 20px;
+            background: rgba(44, 62, 80, 0.95);
+        }
+
+        body.fullscreen-mode .simulation-container {
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            flex: 1;
+            height: calc(100vh - 140px);
+        }
+
+        body.fullscreen-mode canvas {
+            height: 100% !important;
+            background: #fafafa;
+        }
+
+        body.fullscreen-mode .controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+            z-index: 999;
+            display: block;
+        }
+
+        body.fullscreen-mode .global-controls {
+            border-top: none;
+            padding-top: 0;
+            gap: 0;
+        }
+
+        body.fullscreen-mode .btn-group {
+            margin: 0;
+            gap: 15px;
+        }
+
+        body.fullscreen-mode .btn-group button {
+            padding: 12px 22px;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>郭志雄物理 - 一維物理碰撞模擬器</h1>
+    </div>
+
+    <div class="simulation-container">
+        <canvas id="simCanvas"></canvas>
+    </div>
+
+    <!-- 系統質心數據看板 -->
+    <div class="system-card">
+        <div class="system-item">
+            <span class="label">系統總質量 (M)</span>
+            <span class="value" id="val-totalM">3.00 kg</span>
+        </div>
+        <div class="system-item">
+            <span class="label">系統總動量 (P_total)</span>
+            <span class="value" id="val-totalP">4.00 kg·m/s</span>
+        </div>
+        <div class="system-item">
+            <span class="label">系統質心速度 (v_cm)</span>
+            <span class="value" id="val-vcm">1.33 m/s (向右)</span>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- 物體 A 數據 -->
+        <div class="object-card obj-a">
+            <h3 style="color: #3498db;">物體 A (左側)</h3>
+            <div class="data-grid">
+                <div class="data-item">
+                    <span class="label">速度 (方向)</span>
+                    <span class="value" id="val-vA">0.00 m/s</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">運動方向</span>
+                    <span class="value" id="val-dirA">向右</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">動量 (p)</span>
+                    <span class="value" id="val-pA">0.00 kg·m/s</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">動能 (Ek)</span>
+                    <span class="value" id="val-ekA">0.00 J</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 物體 B 數據 -->
+        <div class="object-card obj-b">
+            <h3 style="color: #e74c3c;">物體 B (右側)</h3>
+            <div class="data-grid">
+                <div class="data-item">
+                    <span class="label">速度 (方向)</span>
+                    <span class="value" id="val-vB">0.00 m/s</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">運動方向</span>
+                    <span class="value" id="val-dirB">向左</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">動量 (p)</span>
+                    <span class="value" id="val-pB">0.00 kg·m/s</span>
+                </div>
+                <div class="data-item">
+                    <span class="label">動能 (Ek)</span>
+                    <span class="value" id="val-ekB">0.00 J</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <!-- 物體 A 控制項 -->
+        <div class="control-group">
+            <h4 style="color: #3498db;">物體 A 參數設定</h4>
+            <div class="input-row">
+                <label>質量 (m):</label>
+                <input type="range" id="input-mA" min="0.5" max="10" step="0.5" value="2.0">
+                <span id="disp-mA">2.0 kg</span>
+            </div>
+            <div class="input-row">
+                <label>初速 (v):</label>
+                <input type="range" id="input-vA" min="-10" max="10" step="0.5" value="3.0">
+                <span id="disp-vA">3.0 m/s</span>
+            </div>
+            <div class="input-row">
+                <label>外觀貼圖:</label>
+                <input type="file" id="img-A" class="file-input" accept="image/*">
+            </div>
+        </div>
+
+        <!-- 物體 B 控制項 -->
+        <div class="control-group">
+            <h4 style="color: #e74c3c;">物體 B 參數設定</h4>
+            <div class="input-row">
+                <label>質量 (m):</label>
+                <input type="range" id="input-mB" min="0.5" max="10" step="0.5" value="1.0">
+                <span id="disp-mB">1.0 kg</span>
+            </div>
+            <div class="input-row">
+                <label>初速 (v):</label>
+                <input type="range" id="input-vB" min="-10" max="10" step="0.5" value="-2.0">
+                <span id="disp-vB">-2.0 m/s</span>
+            </div>
+            <div class="input-row">
+                <label>外觀貼圖:</label>
+                <input type="file" id="img-B" class="file-input" accept="image/*">
+            </div>
+        </div>
+
+        <!-- 全域環境與播放控制 -->
+        <div class="global-controls">
+            <div class="global-inputs">
+                <div class="input-row">
+                    <label>恢復係數 (e):</label>
+                    <input type="range" id="input-e" min="0" max="1" step="0.05" value="1.0">
+                    <span id="disp-e">1.00</span>
+                </div>
+                <div class="input-row">
+                    <label>播放速率:</label>
+                    <input type="range" id="input-speed" min="0.25" max="4.0" step="0.25" value="1.0">
+                    <span id="disp-speed">1.00x</span>
+                </div>
+                <div class="input-row">
+                    <label>格放間隔:</label>
+                    <input type="range" id="input-step" min="0.5" max="3.0" step="0.1" value="1.0">
+                    <span id="disp-step">1.0s</span>
+                </div>
+            </div>
+            <!-- 按鈕居中配置 -->
+            <div class="btn-group">
+                <button id="btn-fullscreen" class="btn-fullscreen">⛶ 全螢幕演示</button>
+                <button id="btn-start" class="btn-primary">開始模擬</button>
+                <button id="btn-step-back" class="btn-step-back">⮜ 單格後退</button>
+                <button id="btn-reset" class="btn-reset">↺ 撤銷重置</button>
+                <button id="btn-step" class="btn-step">單格前進 ➔</button>
+                <button id="btn-cm-toggle" class="btn-cm-toggle">質心坐標系：關閉</button>
+                <button id="btn-rel-toggle" class="btn-rel-toggle">相對速度 (B觀察)：關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let isFullscreen = false;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            if (document.body.classList.contains('fullscreen-mode')) {
+                canvas.height = canvas.parentElement.clientHeight || (window.innerHeight - 150);
+            } else {
+                canvas.height = 520;
+            }
+        }
+        resizeCanvas();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            draw();
+        });
+
+        let isRunning = false;
+        let e = 1.0;
+        let timeScale = 1.0;
+        let stepInterval = 1.0;
+        let showCmFrame = false;
+        let showRelSpeed = false;
+
+        const historyStack = [];
+        const MAX_HISTORY = 1800;
+
+        const objA = {
+            x: 150,
+            y: 0,
+            radius: (20 + 2.0 * 4) * 3,
+            mass: 2.0,
+            v: 3.0,
+            vInit: 3.0,
+            angle: 0,
+            color: '#3498db',
+            img: null
+        };
+
+        const objB = {
+            x: 600,
+            y: 0,
+            radius: (20 + 1.0 * 4) * 3,
+            mass: 1.0,
+            v: -2.0,
+            vInit: -2.0,
+            angle: 0,
+            color: '#e74c3c',
+            img: null
+        };
+
+        const btnFullscreen = document.getElementById('btn-fullscreen');
+        const btnStart = document.getElementById('btn-start');
+        const btnStepBack = document.getElementById('btn-step-back');
+        const btnStep = document.getElementById('btn-step');
+        const btnCmToggle = document.getElementById('btn-cm-toggle');
+        const btnRelToggle = document.getElementById('btn-rel-toggle');
+        const btnReset = document.getElementById('btn-reset');
+
+        const inputMA = document.getElementById('input-mA');
+        const inputVA = document.getElementById('input-vA');
+        const dispMA = document.getElementById('disp-mA');
+        const dispVA = document.getElementById('disp-vA');
+
+        const inputMB = document.getElementById('input-mB');
+        const inputVB = document.getElementById('input-vB');
+        const dispMB = document.getElementById('disp-mB');
+        const dispVB = document.getElementById('disp-vB');
+
+        const inputE = document.getElementById('input-e');
+        const dispE = document.getElementById('disp-e');
+
+        const inputSpeed = document.getElementById('input-speed');
+        const dispSpeed = document.getElementById('disp-speed');
+
+        const inputStep = document.getElementById('input-step');
+        const dispStep = document.getElementById('disp-step');
+
+        // 數據 DOM
+        const valVA = document.getElementById('val-vA');
+        const valDirA = document.getElementById('val-dirA');
+        const valPA = document.getElementById('val-pA');
+        const valEkA = document.getElementById('val-ekA');
+
+        const valVB = document.getElementById('val-vB');
+        const valDirB = document.getElementById('val-dirB');
+        const valPB = document.getElementById('val-pB');
+        const valEkB = document.getElementById('val-ekB');
+
+        // 系統數據 DOM
+        const valTotalM = document.getElementById('val-totalM');
+        const valTotalP = document.getElementById('val-totalP');
+        const valVcm = document.getElementById('val-vcm');
+
+        // ========== 全螢幕切換機制 ==========
+        btnFullscreen.addEventListener('click', toggleFullscreen);
+
+        function toggleFullscreen() {
+            isFullscreen = !isFullscreen;
+            if (isFullscreen) {
+                document.body.classList.add('fullscreen-mode');
+                btnFullscreen.textContent = '✖ 退出全螢幕';
+                btnFullscreen.style.background = '#e67e22';
+                // 嘗試啟用瀏覽器原生全螢幕
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                }
+            } else {
+                document.body.classList.remove('fullscreen-mode');
+                btnFullscreen.textContent = '⛶ 全螢幕演示';
+                btnFullscreen.style.background = '#16a085';
+                if (document.fullscreenElement && document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            }
+            setTimeout(() => {
+                resizeCanvas();
+                draw();
+            }, 100);
+        }
+
+        // 監聽鍵盤 ESC 鍵或瀏覽器自帶退出
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && isFullscreen) {
+                toggleFullscreen();
+            }
+        });
+
+        document.getElementById('img-A').addEventListener('change', (evt) => loadImg(evt, objA));
+        document.getElementById('img-B').addEventListener('change', (evt) => loadImg(evt, objB));
+
+        function loadImg(evt, obj) {
+            const file = evt.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => { obj.img = img; draw(); };
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        inputMA.addEventListener('input', (evt) => {
+            objA.mass = parseFloat(evt.target.value);
+            objA.radius = (20 + objA.mass * 4) * 3;
+            dispMA.textContent = objA.mass.toFixed(1) + ' kg';
+            updateDashboard();
+        });
+
+        inputVA.addEventListener('input', (evt) => {
+            objA.vInit = parseFloat(evt.target.value);
+            if (!isRunning) objA.v = objA.vInit;
+            dispVA.textContent = objA.vInit.toFixed(1) + ' m/s';
+            updateDashboard();
+        });
+
+        inputMB.addEventListener('input', (evt) => {
+            objB.mass = parseFloat(evt.target.value);
+            objB.radius = (20 + objB.mass * 4) * 3;
+            dispMB.textContent = objB.mass.toFixed(1) + ' kg';
+            updateDashboard();
+        });
+
+        inputVB.addEventListener('input', (evt) => {
+            objB.vInit = parseFloat(evt.target.value);
+            if (!isRunning) objB.v = objB.vInit;
+            dispVB.textContent = objB.vInit.toFixed(1) + ' m/s';
+            updateDashboard();
+        });
+
+        inputE.addEventListener('input', (evt) => {
+            e = parseFloat(evt.target.value);
+            dispE.textContent = e.toFixed(2);
+        });
+
+        inputSpeed.addEventListener('input', (evt) => {
+            timeScale = parseFloat(evt.target.value);
+            dispSpeed.textContent = timeScale.toFixed(2) + 'x';
+        });
+
+        inputStep.addEventListener('input', (evt) => {
+            stepInterval = parseFloat(evt.target.value);
+            dispStep.textContent = stepInterval.toFixed(1) + 's';
+        });
+
+        btnStart.addEventListener('click', () => {
+            isRunning = !isRunning;
+            btnStart.textContent = isRunning ? '暫停' : '繼續模擬';
+            btnStart.style.background = isRunning ? '#f1c40f' : '#2ecc71';
+            updateButtonStates();
+        });
+
+        // 質心坐標系切換
+        btnCmToggle.addEventListener('click', () => {
+            showCmFrame = !showCmFrame;
+            btnCmToggle.textContent = showCmFrame ? '質心坐標系：開啟中' : '質心坐標系：關閉';
+            btnCmToggle.classList.toggle('active', showCmFrame);
+            draw();
+        });
+
+        // 相對速度切換
+        btnRelToggle.addEventListener('click', () => {
+            showRelSpeed = !showRelSpeed;
+            btnRelToggle.textContent = showRelSpeed ? '相對速度 (B觀察)：開啟中' : '相對速度 (B觀察)：關閉';
+            btnRelToggle.classList.toggle('active', showRelSpeed);
+            draw();
+        });
+
+        // 單格前進
+        btnStep.addEventListener('click', () => {
+            if (!isRunning) {
+                const totalFrames = Math.round(stepInterval * 60);
+                for (let i = 0; i < totalFrames; i++) {
+                    recordState();
+                    stepPhysics(1 / 60);
+                }
+                updateDashboard();
+                draw();
+                updateButtonStates();
+            }
+        });
+
+        // 單格後退
+        btnStepBack.addEventListener('click', () => {
+            if (!isRunning && historyStack.length > 0) {
+                const totalFrames = Math.round(stepInterval * 60);
+                let restored = null;
+                for (let i = 0; i < totalFrames && historyStack.length > 0; i++) {
+                    restored = historyStack.pop();
+                }
+                if (restored) {
+                    objA.x = restored.xA;
+                    objA.v = restored.vA;
+                    objA.angle = restored.angleA;
+                    objB.x = restored.xB;
+                    objB.v = restored.vB;
+                    objB.angle = restored.angleB;
+                }
+                updateDashboard();
+                draw();
+                updateButtonStates();
+            }
+        });
+
+        btnReset.addEventListener('click', resetSimulation);
+
+        function recordState() {
+            historyStack.push({
+                xA: objA.x,
+                vA: objA.v,
+                angleA: objA.angle,
+                xB: objB.x,
+                vB: objB.v,
+                angleB: objB.angle
+            });
+            if (historyStack.length > MAX_HISTORY) {
+                historyStack.shift();
+            }
+        }
+
+        function updateButtonStates() {
+            btnStep.disabled = isRunning;
+            btnStepBack.disabled = isRunning || historyStack.length === 0;
+        }
+
+        function resetSimulation() {
+            isRunning = false;
+            btnStart.textContent = '開始模擬';
+            btnStart.style.background = '#2ecc71';
+            historyStack.length = 0;
+            updateButtonStates();
+            
+            objA.x = canvas.width * 0.25;
+            objB.x = canvas.width * 0.75;
+            
+            objA.v = objA.vInit;
+            objB.v = objB.vInit;
+
+            objA.angle = 0;
+            objB.angle = 0;
+            
+            updateDashboard();
+        }
+
+        function stepPhysics(factor) {
+            const dxA = objA.v * factor;
+            const dxB = objB.v * factor;
+
+            objA.x += dxA;
+            objB.x += dxB;
+
+            const rotationScale = 2.5; 
+            objA.angle += (dxA / objA.radius) * rotationScale;
+            objB.angle += (dxB / objB.radius) * rotationScale;
+
+            if (objA.x + objA.radius >= objB.x - objB.radius) {
+                const overlap = (objA.x + objA.radius) - (objB.x - objB.radius);
+                objA.x -= overlap / 2;
+                objB.x += overlap / 2;
+
+                const mA = objA.mass;
+                const mB = objB.mass;
+                const vA = objA.v;
+                const vB = objB.v;
+
+                const vA_next = ((mA - e * mB) * vA + (1 + e) * mB * vB) / (mA + mB);
+                const vB_next = ((1 + e) * mA * vA + (mB - e * mA) * vB) / (mA + mB);
+
+                objA.v = vA_next;
+                objB.v = vB_next;
+            }
+
+            if (objA.x - objA.radius <= 0) {
+                objA.x = objA.radius;
+                objA.v *= -1;
+            }
+            if (objB.x + objB.radius >= canvas.width) {
+                objB.x = canvas.width - objB.radius;
+                objB.v *= -1;
+            }
+        }
+
+        function updatePhysics() {
+            if (!isRunning) return;
+            recordState();
+            stepPhysics(timeScale);
+            updateDashboard();
+            updateButtonStates();
+        }
+
+        function updateDashboard() {
+            valVA.textContent = Math.abs(objA.v).toFixed(2) + ' m/s';
+            valDirA.textContent = objA.v > 0 ? '向右 →' : (objA.v < 0 ? '← 向左' : '靜止');
+            valPA.textContent = (objA.mass * objA.v).toFixed(2) + ' kg·m/s';
+            valEkA.textContent = (0.5 * objA.mass * objA.v * objA.v).toFixed(2) + ' J';
+
+            valVB.textContent = Math.abs(objB.v).toFixed(2) + ' m/s';
+            valDirB.textContent = objB.v > 0 ? '向右 →' : (objB.v < 0 ? '← 向左' : '靜止');
+            valPB.textContent = (objB.mass * objB.v).toFixed(2) + ' kg·m/s';
+            valEkB.textContent = (0.5 * objB.mass * objB.v * objB.v).toFixed(2) + ' J';
+
+            const totalM = objA.mass + objB.mass;
+            const totalP = (objA.mass * objA.v) + (objB.mass * objB.v);
+            const vcm = totalP / totalM;
+            const dirCm = vcm > 0 ? ' (向右)' : (vcm < 0 ? ' (向左)' : ' (靜止)');
+
+            valTotalM.textContent = totalM.toFixed(2) + ' kg';
+            valTotalP.textContent = totalP.toFixed(2) + ' kg·m/s';
+            valVcm.textContent = Math.abs(vcm).toFixed(2) + ' m/s' + dirCm;
+        }
+
+        function drawVectorArrow(x, y, vx, color, labelPrefix, textPos = 'top') {
+            const arrowScale = 36;
+            const length = vx * arrowScale;
+            const headSize = 22;
+            const isZero = Math.abs(vx) < 0.01;
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 7;
+            ctx.lineCap = 'round';
+
+            if (!isZero) {
+                const dir = vx > 0 ? 1 : -1;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + length, y);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x + length, y);
+                ctx.lineTo(x + length - dir * headSize, y - headSize * 0.55);
+                ctx.lineTo(x + length - dir * headSize, y + headSize * 0.55);
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            const sign = vx > 0.001 ? '+' : (vx < -0.001 ? '' : '');
+            const speedText = `${labelPrefix} = ${sign}${vx.toFixed(2)} m/s`;
+
+            ctx.font = 'bold 28px sans-serif';
+            ctx.textAlign = 'center';
+
+            const textCenterX = isZero ? x : (x + length / 2);
+            let textCenterY = 0;
+
+            if (textPos === 'top') {
+                ctx.textBaseline = 'bottom';
+                textCenterY = y - 10;
+            } else {
+                ctx.textBaseline = 'top';
+                textCenterY = y + 10;
+            }
+
+            const textMetrics = ctx.measureText(speedText);
+            const textWidth = textMetrics.width;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            if (textPos === 'top') {
+                ctx.fillRect(textCenterX - textWidth / 2 - 8, textCenterY - 32, textWidth + 16, 36);
+            } else {
+                ctx.fillRect(textCenterX - textWidth / 2 - 8, textCenterY - 4, textWidth + 16, 36);
+            }
+
+            ctx.fillStyle = color;
+            ctx.fillText(speedText, textCenterX, textCenterY);
+
+            ctx.restore();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 自適應地面高度：全螢幕時根據畫布高度動態計算，非全螢幕固定為 300
+            const groundY = isFullscreen ? (canvas.height * 0.6) : 300;
+            ctx.beginPath();
+            ctx.moveTo(0, groundY);
+            ctx.lineTo(canvas.width, groundY);
+            ctx.strokeStyle = showCmFrame ? '#8e44ad' : '#bdc3c7';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            objA.y = groundY - objA.radius;
+            objB.y = groundY - objB.radius;
+
+            const totalM = objA.mass + objB.mass;
+            const xCm = (objA.mass * objA.x + objB.mass * objB.x) / totalM;
+            const totalP = (objA.mass * objA.v) + (objB.mass * objB.v);
+            const vcm = totalP / totalM;
+
+            // 1. 質心虛線
+            ctx.save();
+            ctx.setLineDash([8, 8]);
+            ctx.beginPath();
+            ctx.moveTo(xCm, 30);
+            ctx.lineTo(xCm, groundY + (showCmFrame ? 180 : 20));
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.fillStyle = '#b7950b';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('質心 (CM)', xCm, 24);
+            ctx.restore();
+
+            // 2. 質心處的速度向量 Vc
+            if (Math.abs(vcm) > 0.01) {
+                drawVectorArrow(xCm, 75, vcm, '#d4ac0d', 'Vc', 'top');
+            }
+
+            // 3. 繪製兩球與自轉貼圖
+            drawObject(objA, 'A', 'Va');
+            drawObject(objB, 'B', 'Vb');
+
+            // 4. 質心坐標系下繪製相對速度向量
+            if (showCmFrame) {
+                const vAc = objA.v - vcm;
+                const vBc = objB.v - vcm;
+                const vCc = 0.0;
+
+                const relY = groundY + 70;
+                drawVectorArrow(objA.x, relY, vAc, '#2980b9', 'Vac', 'bottom');
+                drawVectorArrow(objB.x, relY, vBc, '#c0392b', 'Vbc', 'bottom');
+                drawVectorArrow(xCm, relY + 70, vCc, '#8e44ad', 'Vcc', 'bottom');
+            }
+
+            // 5. 相對速度 (以B為觀察者)
+            if (showRelSpeed) {
+                const vAb = objA.v - objB.v;
+                drawVectorArrow(objA.x, 75, vAb, '#e67e22', 'Vab', 'top');
+            }
+        }
+
+        function drawObject(obj, name, labelPrefix) {
+            ctx.save();
+            ctx.translate(obj.x, obj.y);
+            ctx.rotate(obj.angle);
+
+            if (obj.img) {
+                ctx.beginPath();
+                ctx.arc(0, 0, obj.radius, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(obj.img, -obj.radius, -obj.radius, obj.radius * 2, obj.radius * 2);
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.arc(0, 0, obj.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.arc(0, 0, obj.radius, 0, Math.PI * 2);
+                ctx.fillStyle = obj.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.moveTo(-obj.radius + 6, 0);
+                ctx.lineTo(obj.radius - 6, 0);
+                ctx.moveTo(0, -obj.radius + 6);
+                ctx.lineTo(0, obj.radius - 6);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 36px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(name, 0, 0);
+            }
+            ctx.restore();
+
+            if (Math.abs(obj.v) > 0.01) {
+                drawVectorArrow(obj.x, obj.y - obj.radius - 25, obj.v, obj.color, labelPrefix, 'top');
+            }
+        }
+
+        function loop() {
+            updatePhysics();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        resetSimulation();
+        loop();
+    </script>
+</body>
+</html>

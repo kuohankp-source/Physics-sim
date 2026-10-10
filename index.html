@@ -15,23 +15,22 @@
         body {
             background-color: #f4f7f6;
             color: #333;
-            padding: 15px;
+            padding: 10px 15px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            min-height: 100vh;
+            gap: 8px;
         }
 
         .header {
             text-align: center;
-            padding: 12px;
+            padding: 8px;
             background: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
         .header h1 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #2c3e50;
         }
 
@@ -42,25 +41,32 @@
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
+            transition: height 0.3s ease;
         }
 
+        /* 預設緊湊高度 360px，關閉時底部零空白 */
         canvas {
             display: block;
             width: 100%;
-            height: 520px;
+            height: 360px;
             background: #fafafa;
+            transition: height 0.3s ease;
+        }
+
+        /* 開啟質心坐標系時動態增高至 500px */
+        canvas.expanded {
+            height: 500px;
         }
 
         .system-card {
             background: #2c3e50;
             color: #ffffff;
-            padding: 12px 15px;
+            padding: 8px 15px;
             border-radius: 8px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
         .system-item {
@@ -68,13 +74,13 @@
         }
 
         .system-item .label {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: #bdc3c7;
             display: block;
         }
 
         .system-item .value {
-            font-size: 1.35rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #f1c40f;
         }
@@ -82,78 +88,78 @@
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 8px;
         }
 
         .object-card {
             background: #ffffff;
-            padding: 12px;
+            padding: 8px 12px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-left: 6px solid #333;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            border-left: 5px solid #333;
         }
 
         .object-card.obj-a { border-left-color: #3498db; }
         .object-card.obj-b { border-left-color: #e74c3c; }
 
         .object-card h3 {
-            font-size: 1.15rem;
-            margin-bottom: 8px;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
         }
 
         .data-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            font-size: 0.95rem;
+            gap: 6px;
+            font-size: 0.9rem;
         }
 
         .data-item {
             background: #f8f9fa;
-            padding: 8px;
+            padding: 6px 10px;
             border-radius: 4px;
         }
 
         .data-item span.label {
             color: #666;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: block;
         }
 
         .data-item span.value {
             font-weight: bold;
             color: #2c3e50;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
         }
 
         .controls {
             background: #ffffff;
-            padding: 15px;
+            padding: 10px 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .control-group h4 {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #2c3e50;
             border-bottom: 2px solid #eee;
-            padding-bottom: 4px;
+            padding-bottom: 3px;
         }
 
         .input-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .input-row label {
@@ -166,7 +172,7 @@
         }
 
         .input-row span {
-            width: 60px;
+            width: 55px;
             text-align: right;
             font-weight: bold;
         }
@@ -175,32 +181,32 @@
             grid-column: span 2;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            padding-top: 12px;
+            gap: 10px;
+            padding-top: 8px;
             border-top: 1px solid #eee;
         }
 
         .global-inputs {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
         }
 
         .btn-group {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin: 10px 0 5px 0;
+            margin: 4px 0 2px 0;
         }
 
         button {
-            padding: 10px 18px;
+            padding: 8px 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: bold;
             transition: background 0.2s, opacity 0.2s, transform 0.1s;
         }
@@ -229,7 +235,7 @@
         .btn-cm-toggle.active { 
             background: #9b59b6; 
             border-color: #8e44ad;
-            box-shadow: 0 0 10px rgba(155, 89, 182, 0.7); 
+            box-shadow: 0 0 8px rgba(155, 89, 182, 0.7); 
         }
 
         .btn-rel-toggle {
@@ -240,92 +246,19 @@
         .btn-rel-toggle.active {
             background: #e67e22;
             border-color: #d35400;
-            box-shadow: 0 0 10px rgba(230, 126, 34, 0.7);
+            box-shadow: 0 0 8px rgba(230, 126, 34, 0.7);
         }
 
         .btn-reset { 
             background: #e74c3c; 
             color: white; 
-            font-size: 1rem;
-            padding: 10px 22px;
+            font-size: 0.95rem;
+            padding: 8px 18px;
         }
         .btn-reset:hover:not(:disabled) { background: #c0392b; }
 
-        /* 全螢幕切換按鈕樣式 */
-        .btn-fullscreen {
-            background: #16a085;
-            color: white;
-            font-size: 1rem;
-            padding: 10px 20px;
-        }
-        .btn-fullscreen:hover:not(:disabled) { background: #138d75; }
-
         .file-input {
-            font-size: 0.85rem;
-        }
-
-        /* ========== 全螢幕演示模式專用樣式 ========== */
-        body.fullscreen-mode {
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-            background: #111;
-        }
-
-        body.fullscreen-mode .header,
-        body.fullscreen-mode .dashboard,
-        body.fullscreen-mode .control-group,
-        body.fullscreen-mode .global-inputs {
-            display: none !important;
-        }
-
-        body.fullscreen-mode .system-card {
-            border-radius: 0;
-            padding: 8px 20px;
-            background: rgba(44, 62, 80, 0.95);
-        }
-
-        body.fullscreen-mode .simulation-container {
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
-            flex: 1;
-            height: calc(100vh - 140px);
-        }
-
-        body.fullscreen-mode canvas {
-            height: 100% !important;
-            background: #fafafa;
-        }
-
-        body.fullscreen-mode .controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            padding: 10px 20px;
-            border-radius: 12px 12px 0 0;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
-            z-index: 999;
-            display: block;
-        }
-
-        body.fullscreen-mode .global-controls {
-            border-top: none;
-            padding-top: 0;
-            gap: 0;
-        }
-
-        body.fullscreen-mode .btn-group {
-            margin: 0;
-            gap: 15px;
-        }
-
-        body.fullscreen-mode .btn-group button {
-            padding: 12px 22px;
-            font-size: 1.05rem;
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -461,9 +394,7 @@
                     <span id="disp-step">1.0s</span>
                 </div>
             </div>
-            <!-- 按鈕居中配置 -->
             <div class="btn-group">
-                <button id="btn-fullscreen" class="btn-fullscreen">⛶ 全螢幕演示</button>
                 <button id="btn-start" class="btn-primary">開始模擬</button>
                 <button id="btn-step-back" class="btn-step-back">⮜ 單格後退</button>
                 <button id="btn-reset" class="btn-reset">↺ 撤銷重置</button>
@@ -478,15 +409,13 @@
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
 
-        let isFullscreen = false;
+        let showCmFrame = false; // 是否開啟質心坐標系
+        let showRelSpeed = false; // 是否開啟相對速度 (以B為觀察者)
 
+        // 自適應調整畫布：開啟質心坐標系時為 500px，未開啟時為 360px
         function resizeCanvas() {
             canvas.width = canvas.parentElement.clientWidth;
-            if (document.body.classList.contains('fullscreen-mode')) {
-                canvas.height = canvas.parentElement.clientHeight || (window.innerHeight - 150);
-            } else {
-                canvas.height = 520;
-            }
+            canvas.height = showCmFrame ? 500 : 360;
         }
         resizeCanvas();
         window.addEventListener('resize', () => {
@@ -498,8 +427,6 @@
         let e = 1.0;
         let timeScale = 1.0;
         let stepInterval = 1.0;
-        let showCmFrame = false;
-        let showRelSpeed = false;
 
         const historyStack = [];
         const MAX_HISTORY = 1800;
@@ -507,7 +434,7 @@
         const objA = {
             x: 150,
             y: 0,
-            radius: (20 + 2.0 * 4) * 3,
+            radius: (20 + 2.0 * 4) * 3, // 84px
             mass: 2.0,
             v: 3.0,
             vInit: 3.0,
@@ -519,7 +446,7 @@
         const objB = {
             x: 600,
             y: 0,
-            radius: (20 + 1.0 * 4) * 3,
+            radius: (20 + 1.0 * 4) * 3, // 72px
             mass: 1.0,
             v: -2.0,
             vInit: -2.0,
@@ -528,7 +455,6 @@
             img: null
         };
 
-        const btnFullscreen = document.getElementById('btn-fullscreen');
         const btnStart = document.getElementById('btn-start');
         const btnStepBack = document.getElementById('btn-step-back');
         const btnStep = document.getElementById('btn-step');
@@ -570,40 +496,6 @@
         const valTotalM = document.getElementById('val-totalM');
         const valTotalP = document.getElementById('val-totalP');
         const valVcm = document.getElementById('val-vcm');
-
-        // ========== 全螢幕切換機制 ==========
-        btnFullscreen.addEventListener('click', toggleFullscreen);
-
-        function toggleFullscreen() {
-            isFullscreen = !isFullscreen;
-            if (isFullscreen) {
-                document.body.classList.add('fullscreen-mode');
-                btnFullscreen.textContent = '✖ 退出全螢幕';
-                btnFullscreen.style.background = '#e67e22';
-                // 嘗試啟用瀏覽器原生全螢幕
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen().catch(() => {});
-                }
-            } else {
-                document.body.classList.remove('fullscreen-mode');
-                btnFullscreen.textContent = '⛶ 全螢幕演示';
-                btnFullscreen.style.background = '#16a085';
-                if (document.fullscreenElement && document.exitFullscreen) {
-                    document.exitFullscreen().catch(() => {});
-                }
-            }
-            setTimeout(() => {
-                resizeCanvas();
-                draw();
-            }, 100);
-        }
-
-        // 監聽鍵盤 ESC 鍵或瀏覽器自帶退出
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement && isFullscreen) {
-                toggleFullscreen();
-            }
-        });
 
         document.getElementById('img-A').addEventListener('change', (evt) => loadImg(evt, objA));
         document.getElementById('img-B').addEventListener('change', (evt) => loadImg(evt, objB));
@@ -671,11 +563,15 @@
             updateButtonStates();
         });
 
-        // 質心坐標系切換
+        // 質心坐標系切換：同時觸發畫布動態伸展／收合
         btnCmToggle.addEventListener('click', () => {
             showCmFrame = !showCmFrame;
             btnCmToggle.textContent = showCmFrame ? '質心坐標系：開啟中' : '質心坐標系：關閉';
             btnCmToggle.classList.toggle('active', showCmFrame);
+            
+            // 切換 CSS 樣式並調整 Canvas 解析度
+            canvas.classList.toggle('expanded', showCmFrame);
+            resizeCanvas();
             draw();
         });
 
@@ -687,7 +583,6 @@
             draw();
         });
 
-        // 單格前進
         btnStep.addEventListener('click', () => {
             if (!isRunning) {
                 const totalFrames = Math.round(stepInterval * 60);
@@ -701,7 +596,6 @@
             }
         });
 
-        // 單格後退
         btnStepBack.addEventListener('click', () => {
             if (!isRunning && historyStack.length > 0) {
                 const totalFrames = Math.round(stepInterval * 60);
@@ -831,15 +725,15 @@
         }
 
         function drawVectorArrow(x, y, vx, color, labelPrefix, textPos = 'top') {
-            const arrowScale = 36;
+            const arrowScale = 32;
             const length = vx * arrowScale;
-            const headSize = 22;
+            const headSize = 20;
             const isZero = Math.abs(vx) < 0.01;
 
             ctx.save();
             ctx.strokeStyle = color;
             ctx.fillStyle = color;
-            ctx.lineWidth = 7;
+            ctx.lineWidth = 6;
             ctx.lineCap = 'round';
 
             if (!isZero) {
@@ -857,14 +751,14 @@
                 ctx.fill();
             } else {
                 ctx.beginPath();
-                ctx.arc(x, y, 6, 0, Math.PI * 2);
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
                 ctx.fill();
             }
 
             const sign = vx > 0.001 ? '+' : (vx < -0.001 ? '' : '');
             const speedText = `${labelPrefix} = ${sign}${vx.toFixed(2)} m/s`;
 
-            ctx.font = 'bold 28px sans-serif';
+            ctx.font = 'bold 24px sans-serif';
             ctx.textAlign = 'center';
 
             const textCenterX = isZero ? x : (x + length / 2);
@@ -872,19 +766,19 @@
 
             if (textPos === 'top') {
                 ctx.textBaseline = 'bottom';
-                textCenterY = y - 10;
+                textCenterY = y - 8;
             } else {
                 ctx.textBaseline = 'top';
-                textCenterY = y + 10;
+                textCenterY = y + 8;
             }
 
             const textMetrics = ctx.measureText(speedText);
             const textWidth = textMetrics.width;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
             if (textPos === 'top') {
-                ctx.fillRect(textCenterX - textWidth / 2 - 8, textCenterY - 32, textWidth + 16, 36);
+                ctx.fillRect(textCenterX - textWidth / 2 - 6, textCenterY - 28, textWidth + 12, 32);
             } else {
-                ctx.fillRect(textCenterX - textWidth / 2 - 8, textCenterY - 4, textWidth + 16, 36);
+                ctx.fillRect(textCenterX - textWidth / 2 - 6, textCenterY - 4, textWidth + 12, 32);
             }
 
             ctx.fillStyle = color;
@@ -896,13 +790,13 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 自適應地面高度：全螢幕時根據畫布高度動態計算，非全螢幕固定為 300
-            const groundY = isFullscreen ? (canvas.height * 0.6) : 300;
+            // 動態地面位置：未開啟質心坐標系時貼緊底部 (320px)；開啟時往上拉高 (280px)
+            const groundY = showCmFrame ? 280 : (canvas.height - 35);
             ctx.beginPath();
             ctx.moveTo(0, groundY);
             ctx.lineTo(canvas.width, groundY);
             ctx.strokeStyle = showCmFrame ? '#8e44ad' : '#bdc3c7';
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 5;
             ctx.stroke();
 
             objA.y = groundY - objA.radius;
@@ -915,30 +809,30 @@
 
             // 1. 質心虛線
             ctx.save();
-            ctx.setLineDash([8, 8]);
+            ctx.setLineDash([6, 6]);
             ctx.beginPath();
-            ctx.moveTo(xCm, 30);
-            ctx.lineTo(xCm, groundY + (showCmFrame ? 180 : 20));
+            ctx.moveTo(xCm, 25);
+            ctx.lineTo(xCm, groundY + (showCmFrame ? 180 : 15));
             ctx.strokeStyle = '#f1c40f';
             ctx.lineWidth = 3;
             ctx.stroke();
 
             ctx.fillStyle = '#b7950b';
-            ctx.font = 'bold 20px sans-serif';
+            ctx.font = 'bold 18px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('質心 (CM)', xCm, 24);
+            ctx.fillText('質心 (CM)', xCm, 20);
             ctx.restore();
 
-            // 2. 質心處的速度向量 Vc
+            // 2. 質心處的速度向量 Vc（固定在高處 y = 55，避免遮擋）
             if (Math.abs(vcm) > 0.01) {
-                drawVectorArrow(xCm, 75, vcm, '#d4ac0d', 'Vc', 'top');
+                drawVectorArrow(xCm, 55, vcm, '#d4ac0d', 'Vc', 'top');
             }
 
-            // 3. 繪製兩球與自轉貼圖
+            // 3. 繪製兩球與地面系速度向量 (Va, Vb)
             drawObject(objA, 'A', 'Va');
             drawObject(objB, 'B', 'Vb');
 
-            // 4. 質心坐標系下繪製相對速度向量
+            // 4. 若開啟「質心坐標系」，在球與質心下方清楚展開相對速度
             if (showCmFrame) {
                 const vAc = objA.v - vcm;
                 const vBc = objB.v - vcm;
@@ -950,10 +844,10 @@
                 drawVectorArrow(xCm, relY + 70, vCc, '#8e44ad', 'Vcc', 'bottom');
             }
 
-            // 5. 相對速度 (以B為觀察者)
+            // 5. 若開啟「相對速度 (B觀察)」，在 A 球頂部更高處 (y = 55) 繪製 Vab，避免與 Va 壓疊
             if (showRelSpeed) {
                 const vAb = objA.v - objB.v;
-                drawVectorArrow(objA.x, 75, vAb, '#e67e22', 'Vab', 'top');
+                drawVectorArrow(objA.x, 55, vAb, '#e67e22', 'Vab', 'top');
             }
         }
 
@@ -1001,8 +895,9 @@
             }
             ctx.restore();
 
+            // 繪製物體在地面坐標系的速度向量 (Va, Vb) - 緊貼球體上方 20px
             if (Math.abs(obj.v) > 0.01) {
-                drawVectorArrow(obj.x, obj.y - obj.radius - 25, obj.v, obj.color, labelPrefix, 'top');
+                drawVectorArrow(obj.x, obj.y - obj.radius - 20, obj.v, obj.color, labelPrefix, 'top');
             }
         }
 
